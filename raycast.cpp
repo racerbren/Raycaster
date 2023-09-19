@@ -1,4 +1,6 @@
 #include <SFML/Graphics.hpp>
+#include <cmath>
+#include <iostream>
 
 #define mapWidth 24
 #define mapHeight 24
@@ -64,7 +66,28 @@ int main()
 				run = false;
 			}
 		}
+		//Clear old window before displaying new stuff
 		window.clear();
+
+		//Render stuff here
+		for (int x = 0; x < screenWidth; x++)
+		{
+			//Calculate the direction of the ray based off the camera x value
+			float cameraX = 2 * x / (float)screenWidth - 1;
+			float rayDirX = dirX + planeX * cameraX;
+			float rayDirY = dirY + planeY * cameraX;
+
+			//Calculate what box of the map the ray is in starting at the player's position
+			int mapX = (int)posX;
+			int mapY = (int)posY;
+
+			//Calculate the length of the ray from start to the next square side on x or y axis
+			float sideDistX;
+			float sideDistY;
+
+
+		}
+
 		window.display();
 	}
 
