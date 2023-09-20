@@ -85,8 +85,21 @@ int main()
 			float sideDistX;
 			float sideDistY;
 
+			//Calculate the distance from one x or y side to the next x or y side respectively
+			//This equations are created by using pythagorean theorem deltaDistX^2 = 1^2 + (rayDirY/rayDirX)^2
+			float deltaDistX = std::abs(1 / rayDirX); //Simplified from deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX));
+			float deltaDistY = std::abs(1 / rayDirY); //Simplified from deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY));
 
-		}
+			//
+			float perpWallDist;
+
+			//The direction of the "step" the ray takes (always +/- 1)
+			int stepX;
+			int stepY;
+
+			bool hit = false; //Determine if the ray has hit a "wall"
+			int side; //0 if x side of square was hit, 1 if y side of square was hit
+		};
 
 		window.display();
 	}
