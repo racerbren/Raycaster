@@ -99,6 +99,58 @@ int main()
 
 			bool hit = false; //Determine if the ray has hit a "wall"
 			int side; //0 if x side of square was hit, 1 if y side of square was hit
+
+			/*If ray direction has negative x or y component, the stepX or stepY will be - 1 accordingly
+			  If ray direction has positive x or y component, the stepX or stepY will be +1 accordingly
+			  If ray direction has 0 x or y component, the stepX or stepY does not matter since it will be unused*/
+			if (rayDirX < 0) //Ray x-direction is negative
+			{
+				stepX = -1;
+				sideDistX = (posX - mapX) * deltaDistX;
+			}
+			else
+			{
+				stepX = 1;
+				sideDistX = (mapX - posX + 1.0f) * deltaDistX;
+			}
+			if (rayDirY < 0) //Ray y-direction is negative
+			{
+				stepY = -1;
+				sideDistY = (posY - mapY) * deltaDistY;
+			}
+			else
+			{
+				stepY = 1;
+				sideDistY = (mapY - posY + 1.0f) * deltaDistY;
+			}
+
+			//Start the DDA algorithm
+			while (!hit)
+			{
+				if (sideDistX < sideDistY)   //If we hit a horizontal line first
+				{
+					sideDistX += deltaDistX; //Increment the ray
+					mapX += stepX;			 //Increment ray position in the map
+					side = 0;				 //x side of square is hit;
+				}
+				else						 //If we hit vetical line first
+				{
+					sideDistY += deltaDistY; //Increment the ray
+					mapY += stepY;			 //Increment ray position in map
+					side = 1;				 //y side of square is hit
+				}
+				//Check if ray has hit a square that is a wall (not empty)
+				if (worldMap[mapX][mapY] > 0)
+					hit = true;
+			}
+
+			//Calculate distance from where wall was hit to the camera plane
+			if (side == 0)
+				perpWallDist = (sideDistX - deltaDistX);
+			else
+				perpWallDist = (sideDistY - deltaDistY);
+
+
 		};
 
 		window.display();
