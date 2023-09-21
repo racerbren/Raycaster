@@ -183,11 +183,15 @@ int main()
 			window.draw(line, 2, sf::Lines);
 		};
 
+		//Calculate the fps
 		float fps = 1.0f / ((clock.restart().asMilliseconds()) / 1000.0f);
+
+		//Load a font
 		if (!font.loadFromFile("fonts/Ubuntu-Regular.ttf"))
 			std::cerr << "Failed to load font" << std::endl;
 		else
 		{
+			//Draw the fps text to the screen
 			text.setFont(font);
 			text.setString("FPS: " + std::to_string(fps));
 			window.draw(text);
