@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 #define mapWidth 24
 #define mapHeight 24
@@ -46,8 +47,12 @@ int main()
 	//Camera plane vector (must be perpendicular to direction vector)
 	float planeX = 0.0f, planeY = 0.66f;
 
-	//Time of current frame and time of old frame to display fps counter
-	float time = 0.0f, oldTime = 0.0f;
+	//Set up clock for displaying FPS
+	sf::Clock clock;
+
+	//Set up FPS counter and font
+	sf::Text text;
+	sf::Font font;
 
 	//Create a window in SFML and limit framerate to 60FPS
 	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Raycaster");
@@ -150,8 +155,43 @@ int main()
 			else
 				perpWallDist = (sideDistY - deltaDistY);
 
+			//Calculate height of wall to draw to the screen has one veritcal strip
+			int lineHeight = (int)(screenHeight / perpWallDist);
 
+			//Calculate the highest pixel to start drawing
+			int drawStart = (screenHeight - lineHeight) / 2;
+			if (drawStart < 0)
+				drawStart = 0;				//Cap it at the top of the screen (0)
+			
+			//Calculate the lowest pixel to finish drawing
+			int drawEnd = (screenHeight + lineHeight) / 2;
+			if (drawEnd < 0)
+				drawEnd = screenHeight - 1; //Cap it at the bottom of the screen
+
+			//Choose wall color
+			sf::Color wallColor = sf::Color{ 0, 0, 255, 255 };
+			if (side == 1)
+				wallColor = wallColor - sf::Color{0, 0, 0, 128};
+
+			//Create a line in SFML
+			sf::Vertex line[2]
+			{
+				sf::Vertex(sf::Vector2f(x, drawStart), wallColor),
+				sf::Vertex(sf::Vector2f(x, drawEnd), wallColor)
+			};
+			//Draw line to the window in SFML
+			window.draw(line, 2, sf::Lines);
 		};
+
+		float fps = 1.0f / ((clock.restart().asMilliseconds()) / 1000.0f);
+		if (!font.loadFromFile("fonts/Ubuntu-Regular.ttf"))
+			std::cerr << "Failed to load font" << std::endl;
+		else
+		{
+			text.setFont(font);
+			text.setString("FPS: " + std::to_string(fps));
+			window.draw(text);
+		}
 
 		window.display();
 	}
