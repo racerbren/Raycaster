@@ -5,8 +5,8 @@
 
 #define mapWidth 24
 #define mapHeight 24
-#define screenWidth 640
-#define screenHeight 480
+#define screenWidth 1280
+#define screenHeight 1020
 
 int worldMap[mapWidth][mapHeight] =
 {
@@ -36,6 +36,68 @@ int worldMap[mapWidth][mapHeight] =
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
+void drawText(sf::RenderWindow* window, std::string text, std::string path)
+{
+	//Set up text and font
+	sf::Text sf_text;
+	sf::Font font;
+
+	if (!font.loadFromFile(path))
+		std::cerr << "Failed to load font" << std::endl;
+	else
+	{
+		//Draw the fps text to the screen
+		sf_text.setFont(font);
+		sf_text.setString(text);
+		(*window).draw(sf_text);
+	}
+}
+
+void handleInput(float &posX, float &posY, float &dirX, float &dirY, float moveSpeed, float rotationSpeed, float &planeX, float &planeY)
+{
+	//Move the player by adjusting the posX and posY values when W or S is pressed
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		if (worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false)
+			posX += dirX * moveSpeed;
+		if (worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false)
+			posY += dirY * moveSpeed;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		if (worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false)
+			posX -= dirX * moveSpeed;
+		if (worldMap[int(posX)][int(posY - dirY * moveSpeed)] == false)
+			posY -= dirY * moveSpeed;
+	}
+
+	/*Rotate using A and D keys by rotation the camera plane and 
+	* the direction by multiplaying the vector by the rotation matrix
+	*			[ cos(x)	-sin(x) ]
+	*			[ sin(x)	 cos(x) ]
+	*/
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		float oldDirX = dirX;
+		dirX = dirX * cos(-rotationSpeed) - dirY * sin(-rotationSpeed);
+		dirY = oldDirX * sin(-rotationSpeed) + dirY * cos(-rotationSpeed);
+		float oldPlaneX = planeX;
+		planeX = planeX * cos(-rotationSpeed) - planeY * sin(-rotationSpeed);
+		planeY = oldPlaneX * sin(-rotationSpeed) + planeY * cos(-rotationSpeed);
+	}
+	//Rotate opposite direction
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		float oldDirX = dirX;
+		dirX = dirX * cos(rotationSpeed) - dirY * sin(rotationSpeed);
+		dirY = oldDirX * sin(rotationSpeed) + dirY * cos(rotationSpeed);
+		float oldPlaneX = planeX;
+		planeX = planeX * cos(rotationSpeed) - planeY * sin(rotationSpeed);
+		planeY = oldPlaneX * sin(rotationSpeed) + planeY * cos(rotationSpeed);
+	}
+}
+
 int main()
 {
 	//Player position vector
@@ -49,10 +111,6 @@ int main()
 
 	//Set up clock for displaying FPS
 	sf::Clock clock;
-
-	//Set up FPS counter and font
-	sf::Text text;
-	sf::Font font;
 
 	//Create a window in SFML and limit framerate to 60FPS
 	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Raycaster");
@@ -184,18 +242,18 @@ int main()
 		};
 
 		//Calculate the fps
-		float fps = 1.0f / ((clock.restart().asMilliseconds()) / 1000.0f);
+		float frameTime = (clock.restart().asMilliseconds()) / 1000.0f;
+		float fps = 1.0f / frameTime;
 
-		//Load a font
-		if (!font.loadFromFile("fonts/Ubuntu-Regular.ttf"))
-			std::cerr << "Failed to load font" << std::endl;
-		else
-		{
-			//Draw the fps text to the screen
-			text.setFont(font);
-			text.setString("FPS: " + std::to_string(fps));
-			window.draw(text);
-		}
+		//Modify speed for movement and rotation
+		float moveSpeed = 5.0f * frameTime;
+		float rotationSpeed = 3.0f * frameTime;
+
+		//Draw FPS
+		drawText(&window, "FPS: " + std::to_string(fps), "fonts/Ubuntu-Regular.ttf");
+
+		//Listen for input
+		handleInput(posX, posY, dirX, dirY, moveSpeed, rotationSpeed, planeX, planeY);
 
 		window.display();
 	}
