@@ -15,8 +15,8 @@ int main()
 	//Set up clock for displaying FPS
 	sf::Clock clock;
 
-	//Create a window in SFML and limit framerate to 60FPS
-	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Raycaster");
+	//Create a window in SFML and limit framerate to 60FPS. Also prevent the user from resizing the window
+	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Raycaster", sf::Style::Titlebar | sf::Style::Close);
 	window.setFramerateLimit(60);
 
 	bool run = true;
