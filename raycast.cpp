@@ -146,7 +146,7 @@ int main()
 		float rotationSpeed = 3.0f * frameTime;
 
 		//Draw FPS
-		drawText(&window, "FPS: " + std::to_string(fps), "fonts/Ubuntu-Regular.ttf");
+		drawText(&window, "FPS: " + std::to_string(fps), "demo/fonts/Ubuntu-Regular.ttf");
 
 		//Listen for input
 		handleInput(posX, posY, dirX, dirY, moveSpeed, rotationSpeed, planeX, planeY);
