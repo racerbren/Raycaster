@@ -39,7 +39,8 @@ int main()
 		for (int x = 0; x < screenWidth; x++)
 		{
 			//Calculate the direction of the ray based off the camera x value
-			float cameraX = 2 * x / (float)screenWidth - 1;
+			//CameraX represents the x-coord on the camera plane that corresponds to the current vertical stripe of the screen
+			float cameraX = (2 * (x / (float)screenWidth)) - 1; //Multiply by 2 so that the range is from -1 to 1 instead of -1 to 0
 			float rayDirX = dirX + planeX * cameraX;
 			float rayDirY = dirY + planeY * cameraX;
 
@@ -106,7 +107,7 @@ int main()
 					side = 1;				 //y side of square is hit
 				}
 				//Check if ray has hit a square that is a wall (not empty)
-				if (worldMap[mapX][mapY] > 0)
+				if (*(worldMap + mapX * map.getHeight()+ mapY) > 0)
 					hit = true;
 			}
 
@@ -130,7 +131,7 @@ int main()
 				drawEnd = screenHeight - 1; //Cap it at the bottom of the screen
 
 			//Choose wall color
-			sf::Color wallColor = sf::Color{ 175, 0, 255, 255 };
+			sf::Color wallColor = sf::Color{ 255, 255, 255, 200 };
 
 			//Draw the walls
 			drawWalls(&window, wallColor, drawStart, drawEnd, side, x);
