@@ -41,13 +41,33 @@ Map::Map(const std::string path)
 			{
 				m_playerStartX = i;
 				m_playerStartY = j;
+				*(m_map + i * m_height + j) = 2;
 			}
 			else if (color == sf::Color::Red)
 			{
 				m_destinationX = i;
 				m_destinationY = j;
+				*(m_map + i * m_height + j) = 3;
 			}
 		}
+	}
+}
+
+Map::~Map()
+{
+	delete[] m_map;
+}
+
+void Map::aStar(int startX, int startY)
+{
+	std::vector<Node> openList;
+	std::vector<Node> closedList;
+	Node start;
+	openList.push_back(start);
+
+	while (!openList.empty())
+	{
+		Node current = openList[0];
 	}
 }
 
@@ -56,12 +76,22 @@ int Map::getHeight()
 	return m_height;
 }
 
+int Map::getStartX()
+{
+	return m_playerStartX;
+}
+
+int Map::getStartY()
+{
+	return m_playerStartY;
+}
+
 int* Map::loadMap()
 {
 	return m_map;
 }
 
-Map::~Map()
+sf::Image Map::getMapImage()
 {
-	delete[] m_map;
+	return m_mapImage;
 }

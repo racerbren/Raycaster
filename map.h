@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <cmath>
+#include <vector>
+#include "node.h"
 
 class Map {
 private:
@@ -16,7 +19,10 @@ public:
 	Map();
 	Map(const std::string path);
 	~Map();
-	void aStar(sf::Image &mapImage, int* m_map, int startX, int startY, int endX, int endY);
+	void aStar(int startX, int startY);
 	int getHeight();
+	int getStartX();
+	int getStartY();
 	int* loadMap();
+	sf::Image getMapImage();
 };
