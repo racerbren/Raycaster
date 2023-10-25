@@ -17,6 +17,10 @@ Map::Map(const std::string path)
 	m_mapImage.loadFromFile(path);
 	m_width = m_mapImage.getSize().x;
 	m_height = m_mapImage.getSize().y;
+	m_playerStartX = 0;
+	m_playerStartY = 0;
+	m_destinationX = 0;
+	m_destinationY = 0;
 
 	//Initialize map array by dynamically allocating memory for a 2D array
 	m_map = new int[m_width * m_height];  
@@ -60,14 +64,72 @@ Map::~Map()
 
 void Map::aStar(int startX, int startY)
 {
-	std::vector<Node> openList;
-	std::vector<Node> closedList;
-	Node start;
-	openList.push_back(start);
+	std::set<Node> openList;
+	std::set<Node> closedList;
+	Node start(nullptr, startX, startY);
+	openList.insert(start);
 
 	while (!openList.empty())
 	{
-		Node current = openList[0];
+		Node current = *openList.begin();
+		std::set<Node>::iterator it = openList.begin();
+		while (it != openList.end())
+		{
+			it++;
+			Node temp = *it;
+			if (temp.getf() <= current.getf())
+			{
+				if (temp.geth() < current.geth())
+					current = temp;
+			}
+		}
+
+		closedList.insert(current);
+		openList.erase(openList.begin());
+
+		if (current.getx() == m_destinationX && current.gety() == m_destinationY)
+		{
+			break;
+		}
+
+		std::vector<Node> neighbors;
+		for (int i = -1; i <= 1; i++)
+		{
+			for (int j = -1; j <= 1; j++)
+			{
+				if ((i != 0) && (j != 0))
+				{
+					Node neighbor(&current, i, j);
+					neighbor.calculateg();
+					neighbor.calculateh(m_destinationX, m_destinationY);
+					neighbor.calculatef();
+					neighbors.push_back(neighbor);
+				}
+			}
+		}
+
+		float newG;
+		for (size_t i = 0; i < neighbors.size(); i++)
+		{
+			Node currNeighbor = neighbors[i];
+			if ((currNeighbor.isValid(m_map, m_height, m_width) && 
+				!currNeighbor.isBlocked(m_map, m_height)) ||
+				closedList.find(currNeighbor) != closedList.end())
+			{
+				continue;
+			}
+			newG = current.getg() + (float)sqrt(pow(currNeighbor.getx() - current.getx(), 2) + pow(currNeighbor.gety() - current.gety(), 2));
+			if (newG < currNeighbor.getg() || openList.find(currNeighbor) == openList.end())
+			{
+				currNeighbor.setg(newG);
+				currNeighbor.seth((float)sqrt(pow(currNeighbor.getx() - m_destinationX, 2) + pow(currNeighbor.gety() - m_destinationY, 2)));
+				currNeighbor.calculatef();
+				currNeighbor.setParent(&current);
+				if (openList.find(currNeighbor) == openList.end())
+					openList.insert(currNeighbor);
+			}
+		}
+
 	}
 }
 

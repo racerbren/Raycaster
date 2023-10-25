@@ -3,6 +3,7 @@
 #include <string>
 #include <cmath>
 #include <vector>
+#include <set>
 #include "node.h"
 
 class Map {

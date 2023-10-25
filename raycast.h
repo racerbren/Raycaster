@@ -119,3 +119,13 @@ void drawWalls(sf::RenderWindow* window, sf::Color color, int& start, int& end, 
 	//Draw line to the window in SFML
 	window->draw(line, 2, sf::Lines);
 }
+
+void drawMap(sf::RenderWindow* window, Map &map)
+{
+	sf::Texture tex;
+	sf::Sprite sprite;
+	tex.loadFromImage(map.getMapImage());
+	sprite.setTexture(tex, true);
+	sprite.setScale(10, 10);
+	window->draw(sprite);
+}

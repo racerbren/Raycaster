@@ -4,7 +4,7 @@
 int main()
 {
 	//Player position vector
-	float posX = 22.0f, posY = 12.0f;
+	float posX = map.getStartX(), posY = map.getStartY();
 
 	//Player direction vector
 	float dirX = -1.0f, dirY = 0.0f;
@@ -22,6 +22,7 @@ int main()
 	bool run = true;
 	while (run)
 	{
+		//map.aStar(posX, posY);
 		//Check if window was closed
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -107,7 +108,7 @@ int main()
 					side = 1;				 //y side of square is hit
 				}
 				//Check if ray has hit a square that is a wall (not empty)
-				if (*(worldMap + mapX * map.getHeight()+ mapY) > 0)
+				if (*(worldMap + mapX * map.getHeight()+ mapY) == 1)
 					hit = true;
 			}
 
@@ -146,8 +147,11 @@ int main()
 		float moveSpeed = 5.0f * frameTime;
 		float rotationSpeed = 3.0f * frameTime;
 
-		//Draw FPS
-		drawText(&window, "FPS: " + std::to_string(fps), "demo/fonts/Ubuntu-Regular.ttf");
+		//Draw FPS - Uncomment to unable this
+		//drawText(&window, "FPS: " + std::to_string(fps), "demo/fonts/Ubuntu-Regular.ttf");
+
+		//Draw minimap in top window
+		drawMap(&window, map);
 
 		//Listen for input
 		handleInput(posX, posY, dirX, dirY, moveSpeed, rotationSpeed, planeX, planeY);

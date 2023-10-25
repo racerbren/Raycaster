@@ -2,8 +2,7 @@
 
 Node::Node()
 {
-	parentX = -1;
-	parentY = -1;
+	m_parent = nullptr;
 	x = -1;
 	y = -1;
 	f = -1;
@@ -11,15 +10,19 @@ Node::Node()
 	h = -1;
 }
 
-Node::Node(int px, int py, int posx, int posy)
+Node::Node(Node* parent, int posx, int posy)
 {
-	parentX = px;
-	parentY = py;
+	m_parent = parent;
 	x = posx;
 	y = posy;
 	f = 0;
 	g = 0;
 	h = 0;
+}
+
+bool Node::operator<(const Node& rhs) const noexcept
+{
+	return (x < rhs.x) && (y < rhs.y);
 }
 
 bool Node::isDestination(int* map, int height)
@@ -43,24 +46,69 @@ bool Node::isValid(int* map, int height, int width)
 	return (x >= 0) && (x < width) && (y >= 0) && (y < height);
 }
 
-int Node::calculatef()
+float Node::calculatef()
 {
 	f = g + h;
 	return f;
 }
 
-int Node::calculateg()
+float Node::calculateg()
 {
-	int a = parentX - x;
-	int b = parentY - y;
-	g = sqrt(pow(a, 2) + pow(b, 2));
+	int a = m_parent->getx() - x;
+	int b = m_parent->gety() - y;
+	g = (float)sqrt(pow(a, 2) + pow(b, 2));
 	return g;
 }
 
-int Node::calculateh(int destX, int destY)
+float Node::calculateh(int destX, int destY)
 {
 	int a = x - destX;
 	int b = y - destY;
-	h = sqrt(pow(a, 2) + pow(b, 2));
+	h = (float)sqrt(pow(a, 2) + pow(b, 2));
 	return h;
+}
+
+float Node::getf()
+{
+	return f;
+}
+
+float Node::getg()
+{
+	return g;
+}
+
+float Node::geth()
+{
+	return h;
+}
+
+int Node::getx()
+{
+	return x;
+}
+
+int Node::gety()
+{
+	return y;
+}
+
+Node* Node::getParent()
+{
+	return m_parent;
+}
+
+void Node::setg(float newg)
+{
+	g = newg;
+}
+
+void Node::seth(float newh)
+{
+	h = newh;
+}
+
+void Node::setParent(Node* parent)
+{
+	m_parent = parent;
 }
