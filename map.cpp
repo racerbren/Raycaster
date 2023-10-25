@@ -64,22 +64,24 @@ Map::~Map()
 
 void Map::aStar(int startX, int startY)
 {
-	std::set<Node> openList;
-	std::set<Node> closedList;
+	std::set<Node*> openList;
+	std::set<Node*> closedList;
+	std::vector<Node*> path;
+	std::vector<Node> neighbors;
 	Node start(nullptr, startX, startY);
-	openList.insert(start);
-
+	Node destination(nullptr, m_destinationX, m_destinationY);
+	openList.insert(&start);
+	bool found = false;
 	while (!openList.empty())
 	{
-		Node current = *openList.begin();
-		std::set<Node>::iterator it = openList.begin();
-		while (it != openList.end())
+		Node* current = *openList.begin();
+
+		for(auto it: openList)
 		{
-			it++;
-			Node temp = *it;
-			if (temp.getf() <= current.getf())
+			Node* temp = it;
+			if (temp->getf() <= current->getf())
 			{
-				if (temp.geth() < current.geth())
+				if (temp->geth() < current->geth())
 					current = temp;
 			}
 		}
@@ -87,49 +89,58 @@ void Map::aStar(int startX, int startY)
 		closedList.insert(current);
 		openList.erase(openList.begin());
 
-		if (current.getx() == m_destinationX && current.gety() == m_destinationY)
+		if (*current == destination)
 		{
+			Node* temp = current;
+			while ((temp->getx() != start.getx()) && (temp->gety() != start.gety()))
+			{
+				path.push_back(temp);
+				temp = temp->getParent();
+			}
+			found = true;
 			break;
 		}
 
-		std::vector<Node> neighbors;
+		neighbors.clear();
 		for (int i = -1; i <= 1; i++)
 		{
 			for (int j = -1; j <= 1; j++)
 			{
-				if ((i != 0) && (j != 0))
-				{
-					Node neighbor(&current, i, j);
-					neighbor.calculateg();
-					neighbor.calculateh(m_destinationX, m_destinationY);
-					neighbor.calculatef();
-					neighbors.push_back(neighbor);
-				}
+				if ((i == 0) && (j == 0))
+					continue;
+				Node neighbor(current, current->getx() + i, current->gety() + j);
+				neighbor.calculateg();
+				neighbor.calculateh(m_destinationX, m_destinationY);
+				neighbor.calculatef();
+				neighbors.push_back(neighbor);
 			}
 		}
 
-		float newG;
 		for (size_t i = 0; i < neighbors.size(); i++)
 		{
-			Node currNeighbor = neighbors[i];
-			if ((currNeighbor.isValid(m_map, m_height, m_width) && 
-				!currNeighbor.isBlocked(m_map, m_height)) ||
+			Node* currNeighbor = &neighbors[i];
+			if ((!currNeighbor->isValid(m_map, m_height, m_width) || 
+				currNeighbor->isBlocked(m_map, m_height)) ||
 				closedList.find(currNeighbor) != closedList.end())
 			{
 				continue;
 			}
-			newG = current.getg() + (float)sqrt(pow(currNeighbor.getx() - current.getx(), 2) + pow(currNeighbor.gety() - current.gety(), 2));
-			if (newG < currNeighbor.getg() || openList.find(currNeighbor) == openList.end())
+			float newH = (float)sqrt(pow(currNeighbor->getx() - m_destinationX, 2) + pow(currNeighbor->gety() - m_destinationY, 2));
+			float newG = current->getg() + (float)sqrt(pow(currNeighbor->getx() - current->getx(), 2) + pow(currNeighbor->gety() - current->gety(), 2));
+			if ((newG <= currNeighbor->getg()) || (openList.find(currNeighbor) == openList.end()))
 			{
-				currNeighbor.setg(newG);
-				currNeighbor.seth((float)sqrt(pow(currNeighbor.getx() - m_destinationX, 2) + pow(currNeighbor.gety() - m_destinationY, 2)));
-				currNeighbor.calculatef();
-				currNeighbor.setParent(&current);
+				currNeighbor->setg(newG);
+				currNeighbor->seth(newH);
+				currNeighbor->calculatef();
+				currNeighbor->setParent(current);
 				if (openList.find(currNeighbor) == openList.end())
 					openList.insert(currNeighbor);
 			}
 		}
-
+	}
+	for (size_t i = 0; i < path.size(); i++)
+	{
+		std::cout << path[i]->getx() << ", " << path[i]->gety() << std::endl;
 	}
 }
 

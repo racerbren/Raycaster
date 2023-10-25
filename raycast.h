@@ -120,10 +120,11 @@ void drawWalls(sf::RenderWindow* window, sf::Color color, int& start, int& end, 
 	window->draw(line, 2, sf::Lines);
 }
 
-void drawMap(sf::RenderWindow* window, Map &map)
+void drawMap(sf::RenderWindow* window, Map &map, int x, int y)
 {
 	sf::Texture tex;
 	sf::Sprite sprite;
+	map.aStar(x, y);
 	tex.loadFromImage(map.getMapImage());
 	sprite.setTexture(tex, true);
 	sprite.setScale(10, 10);

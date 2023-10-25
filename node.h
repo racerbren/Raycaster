@@ -11,6 +11,7 @@ public:
 	Node();
 	Node(Node* parent, int posx, int posy);
 	bool operator<(const Node& rhs) const noexcept;
+	bool operator==(const Node& rhs) const noexcept;
 	bool isDestination(int* map, int height);
 	bool isBlocked(int* map, int height);
 	bool isValid(int* map, int height, int width);
@@ -23,7 +24,7 @@ public:
 	int getx();
 	int gety();
 	Node* getParent();
-	void setg(float newg);
-	void seth(float newh);
+	void setg(float& newg);
+	void seth(float& newh);
 	void setParent(Node* parent);
 };

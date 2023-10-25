@@ -22,7 +22,6 @@ int main()
 	bool run = true;
 	while (run)
 	{
-		//map.aStar(posX, posY);
 		//Check if window was closed
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -151,7 +150,7 @@ int main()
 		//drawText(&window, "FPS: " + std::to_string(fps), "demo/fonts/Ubuntu-Regular.ttf");
 
 		//Draw minimap in top window
-		drawMap(&window, map);
+		drawMap(&window, map, posX, posY);
 
 		//Listen for input
 		handleInput(posX, posY, dirX, dirY, moveSpeed, rotationSpeed, planeX, planeY);

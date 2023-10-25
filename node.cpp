@@ -25,20 +25,19 @@ bool Node::operator<(const Node& rhs) const noexcept
 	return (x < rhs.x) && (y < rhs.y);
 }
 
+bool Node::operator==(const Node& rhs) const noexcept
+{
+	return (x == rhs.x) && (y == rhs.y);
+}
+
 bool Node::isDestination(int* map, int height)
 {
-	if (*(map + x * height + y) == 3)
-		return true;
-	else
-		return false;
+	return (*(map + x * height + y) == 3);
 }
 
 bool Node::isBlocked(int* map, int height)
 {
-	if (*(map + x * height + y) == 1)
-		return true;
-	else
-		return false;
+	return (*(map + x * height + y) == 1);
 }
 
 bool Node::isValid(int* map, int height, int width)
@@ -48,49 +47,49 @@ bool Node::isValid(int* map, int height, int width)
 
 float Node::calculatef()
 {
-	f = g + h;
-	return f;
+	this->f = this->g + this->h;
+	return this->f;
 }
 
 float Node::calculateg()
 {
 	int a = m_parent->getx() - x;
 	int b = m_parent->gety() - y;
-	g = (float)sqrt(pow(a, 2) + pow(b, 2));
-	return g;
+	this->g = (float)sqrt(pow(a, 2) + pow(b, 2));
+	return this->g;
 }
 
 float Node::calculateh(int destX, int destY)
 {
-	int a = x - destX;
-	int b = y - destY;
-	h = (float)sqrt(pow(a, 2) + pow(b, 2));
-	return h;
+	int a = this->x - destX;
+	int b = this->y - destY;
+	this->h = (float)sqrt(pow(a, 2) + pow(b, 2));
+	return this->h;
 }
 
 float Node::getf()
 {
-	return f;
+	return this->f;
 }
 
 float Node::getg()
 {
-	return g;
+	return this->g;
 }
 
 float Node::geth()
 {
-	return h;
+	return this->h;
 }
 
 int Node::getx()
 {
-	return x;
+	return this->x;
 }
 
 int Node::gety()
 {
-	return y;
+	return this->y;
 }
 
 Node* Node::getParent()
@@ -98,14 +97,14 @@ Node* Node::getParent()
 	return m_parent;
 }
 
-void Node::setg(float newg)
+void Node::setg(float& newg)
 {
-	g = newg;
+	this->g = newg;
 }
 
-void Node::seth(float newh)
+void Node::seth(float& newh)
 {
-	h = newh;
+	this->h = newh;
 }
 
 void Node::setParent(Node* parent)

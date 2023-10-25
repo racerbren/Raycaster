@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <set>
+#include <iostream>
 #include "node.h"
 
 class Map {
