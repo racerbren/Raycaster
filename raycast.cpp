@@ -19,6 +19,8 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Raycaster", sf::Style::Titlebar | sf::Style::Close);
 	window.setFramerateLimit(60);
 
+	map.aStar(posX, posY);
+
 	bool run = true;
 	while (run)
 	{

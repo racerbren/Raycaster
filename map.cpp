@@ -68,39 +68,45 @@ void Map::aStar(int startX, int startY)
 	std::set<Node*> closedList;
 	std::vector<Node*> path;
 	std::vector<Node> neighbors;
+	std::set<Node*>::iterator it = openList.begin();
 	Node start(nullptr, startX, startY);
 	Node destination(nullptr, m_destinationX, m_destinationY);
 	openList.insert(&start);
 	bool found = false;
-	while (!openList.empty())
-	{
-		Node* current = *openList.begin();
 
-		for(auto it: openList)
+	while (!found)
+	{
+		it = openList.begin();
+		Node* current = *it;
+		it++;
+		while(it != openList.end())
 		{
-			Node* temp = it;
+			Node* temp = *it;
 			if (temp->getf() <= current->getf())
 			{
 				if (temp->geth() < current->geth())
 					current = temp;
 			}
+			it++;
 		}
 
 		closedList.insert(current);
 		openList.erase(openList.begin());
 
-		if (*current == destination)
+		if (((int)current->getx() == m_destinationX) && ((int)current->gety() == m_destinationY))
 		{
-			Node* temp = current;
-			while ((temp->getx() != start.getx()) && (temp->gety() != start.gety()))
+			std::cout << "found" << std::endl;
+			//Node* temp = current;
+			while (current->getParent() != nullptr)
 			{
-				path.push_back(temp);
-				temp = temp->getParent();
+				path.push_back(current);
+				current = current->getParent();
 			}
 			found = true;
 			break;
 		}
 
+		//Change this from linked list implementation to just be parentx and parenty
 		neighbors.clear();
 		for (int i = -1; i <= 1; i++)
 		{
@@ -119,29 +125,30 @@ void Map::aStar(int startX, int startY)
 		for (size_t i = 0; i < neighbors.size(); i++)
 		{
 			Node* currNeighbor = &neighbors[i];
-			if ((!currNeighbor->isValid(m_map, m_height, m_width) || 
+			if ((!currNeighbor->isValid(m_map, m_height, m_width) ||
 				currNeighbor->isBlocked(m_map, m_height)) ||
 				closedList.find(currNeighbor) != closedList.end())
 			{
 				continue;
 			}
-			float newH = (float)sqrt(pow(currNeighbor->getx() - m_destinationX, 2) + pow(currNeighbor->gety() - m_destinationY, 2));
-			float newG = current->getg() + (float)sqrt(pow(currNeighbor->getx() - current->getx(), 2) + pow(currNeighbor->gety() - current->gety(), 2));
-			if ((newG <= currNeighbor->getg()) || (openList.find(currNeighbor) == openList.end()))
+			else if (openList.find(currNeighbor) == openList.end())
+				openList.insert(currNeighbor);
+			else if (openList.find(currNeighbor) != openList.end())
 			{
-				currNeighbor->setg(newG);
-				currNeighbor->seth(newH);
-				currNeighbor->calculatef();
-				currNeighbor->setParent(current);
-				if (openList.find(currNeighbor) == openList.end())
-					openList.insert(currNeighbor);
+				float newCostToCurrNeighbor = (float)sqrt(pow(currNeighbor->getx() - current->getx(), 2) + pow(currNeighbor->gety() - current->gety(), 2));
+				if (newCostToCurrNeighbor < currNeighbor->getg())
+				{
+					currNeighbor->setg(newCostToCurrNeighbor);
+					currNeighbor->calculatef();
+					currNeighbor->setParent(current);
+				}
 			}
 		}
 	}
-	for (size_t i = 0; i < path.size(); i++)
+	/*for (size_t i = 0; i < path.size(); i++)
 	{
 		std::cout << path[i]->getx() << ", " << path[i]->gety() << std::endl;
-	}
+	}*/
 }
 
 int Map::getHeight()

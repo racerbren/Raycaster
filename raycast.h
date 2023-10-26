@@ -124,7 +124,6 @@ void drawMap(sf::RenderWindow* window, Map &map, int x, int y)
 {
 	sf::Texture tex;
 	sf::Sprite sprite;
-	map.aStar(x, y);
 	tex.loadFromImage(map.getMapImage());
 	sprite.setTexture(tex, true);
 	sprite.setScale(10, 10);
