@@ -19,11 +19,10 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Raycaster", sf::Style::Titlebar | sf::Style::Close);
 	window.setFramerateLimit(60);
 
-	map.aStar(posX, posY);
-
 	bool run = true;
 	while (run)
 	{
+		map.aStar((int)posX, (int)posY);
 		//Check if window was closed
 		sf::Event event;
 		while (window.pollEvent(event))

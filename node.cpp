@@ -47,49 +47,49 @@ bool Node::isValid(int* map, int height, int width)
 
 float Node::calculatef()
 {
-	this->f = this->g + this->h;
-	return this->f;
+	f = g + h;
+	return f;
 }
 
 float Node::calculateg()
 {
 	int a = m_parent->getx() - x;
 	int b = m_parent->gety() - y;
-	this->g = (float)sqrt(pow(a, 2) + pow(b, 2));
-	return this->g;
+	g = (float)sqrt(pow(a, 2) + pow(b, 2));
+	return g;
 }
 
 float Node::calculateh(int destX, int destY)
 {
-	int a = this->x - destX;
-	int b = this->y - destY;
-	this->h = (float)sqrt(pow(a, 2) + pow(b, 2));
-	return this->h;
+	int a = x - destX;
+	int b = y - destY;
+	h = (float)sqrt(pow(a, 2) + pow(b, 2));
+	return h;
 }
 
 float Node::getf()
 {
-	return this->f;
+	return f;
 }
 
 float Node::getg()
 {
-	return this->g;
+	return g;
 }
 
 float Node::geth()
 {
-	return this->h;
+	return h;
 }
 
 int Node::getx()
 {
-	return this->x;
+	return x;
 }
 
 int Node::gety()
 {
-	return this->y;
+	return y;
 }
 
 Node* Node::getParent()
@@ -99,15 +99,15 @@ Node* Node::getParent()
 
 void Node::setg(float& newg)
 {
-	this->g = newg;
+	g = newg;
 }
 
 void Node::seth(float& newh)
 {
-	this->h = newh;
+	h = newh;
 }
 
-void Node::setParent(Node* parent)
+void Node::setParent(Node* newParent)
 {
-	m_parent = parent;
+	m_parent = newParent;
 }

@@ -64,13 +64,26 @@ Map::~Map()
 
 void Map::aStar(int startX, int startY)
 {
+	for (int i = 0; i < m_width; i++)
+	{
+		for (int j = 0; j < m_height; j++)
+		{
+			if (*(m_map + i * m_height + j) == 4)
+			{
+				*(m_map + i * m_height + j) = 0;
+				m_mapImage.setPixel(i, j, sf::Color::White);
+			}
+		}
+	}
+
 	std::set<Node*> openList;
 	std::set<Node*> closedList;
 	std::vector<Node*> path;
-	std::vector<Node> neighbors;
-	std::set<Node*>::iterator it = openList.begin();
+	std::vector<Node*> neighbors;
+	std::set<Node*>::iterator it;
+
 	Node start(nullptr, startX, startY);
-	Node destination(nullptr, m_destinationX, m_destinationY);
+
 	openList.insert(&start);
 	bool found = false;
 
@@ -96,7 +109,7 @@ void Map::aStar(int startX, int startY)
 		if (((int)current->getx() == m_destinationX) && ((int)current->gety() == m_destinationY))
 		{
 			std::cout << "found" << std::endl;
-			//Node* temp = current;
+			Node* temp = current;
 			while (current->getParent() != nullptr)
 			{
 				path.push_back(current);
@@ -106,7 +119,6 @@ void Map::aStar(int startX, int startY)
 			break;
 		}
 
-		//Change this from linked list implementation to just be parentx and parenty
 		neighbors.clear();
 		for (int i = -1; i <= 1; i++)
 		{
@@ -114,17 +126,19 @@ void Map::aStar(int startX, int startY)
 			{
 				if ((i == 0) && (j == 0))
 					continue;
-				Node neighbor(current, current->getx() + i, current->gety() + j);
-				neighbor.calculateg();
-				neighbor.calculateh(m_destinationX, m_destinationY);
-				neighbor.calculatef();
+				int x = current->getx() + i;
+				int y = current->gety() + j;
+				Node* neighbor = new Node(current, x, y);
+				neighbor->calculateg();
+				neighbor->calculateh(m_destinationX, m_destinationY);
+				neighbor->calculatef();
 				neighbors.push_back(neighbor);
 			}
 		}
 
 		for (size_t i = 0; i < neighbors.size(); i++)
 		{
-			Node* currNeighbor = &neighbors[i];
+			Node* currNeighbor = neighbors[i];
 			if ((!currNeighbor->isValid(m_map, m_height, m_width) ||
 				currNeighbor->isBlocked(m_map, m_height)) ||
 				closedList.find(currNeighbor) != closedList.end())
@@ -145,10 +159,19 @@ void Map::aStar(int startX, int startY)
 			}
 		}
 	}
-	/*for (size_t i = 0; i < path.size(); i++)
+	for (size_t i = 0; i < path.size(); i++)
 	{
-		std::cout << path[i]->getx() << ", " << path[i]->gety() << std::endl;
-	}*/
+		Node* current = path[i];
+		int x = current->getx();
+		int y = current->gety();
+		*(m_map + x * m_height + y) = 4;
+		m_mapImage.setPixel(x, y, sf::Color::Magenta);
+	}
+
+	for (int k = 0; k < neighbors.size(); k++)
+	{
+		delete neighbors[k];
+	}
 }
 
 int Map::getHeight()
