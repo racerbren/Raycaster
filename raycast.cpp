@@ -37,6 +37,49 @@ int main()
 		window.clear();
 
 		//Render stuff here
+		//Floor
+		sf::Vertex* vertices = new sf::Vertex[screenHeight * screenWidth];
+		for (int y = screenHeight / 2; y < screenHeight; y++)
+		{
+			//Ray Direction for leftmost ray
+			float rayDirX0 = dirX - planeX;
+			float rayDirY0 = dirY - planeY;
+
+			//Ray Direction for rightmost ray
+			float rayDirX1 = dirX + planeX;
+			float rayDirY1 = dirY + planeY;
+
+			//Current y position relevant to the horizon
+			int p = y - screenHeight / 2;
+
+			//The position along the z axis of the camera
+			float posZ = 0.5 * screenHeight;
+			float rowDistance = posZ / p;
+
+			float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / screenWidth;
+			float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / screenWidth;
+
+			float floorX = posX + rowDistance * rayDirX0;
+			float floorY = posY + rowDistance * rayDirY0;
+
+			for (int x = 0; x < screenWidth; x++)
+			{
+				int cellX = (int)floorX;
+				int cellY = (int)floorY;
+
+				floorX += floorStepX;
+				floorY += floorStepY;
+
+				sf::Color floorColor = sf::Color{255, 255, 255, 100};
+				sf::Vertex v(sf::Vector2f(x, y), floorColor);
+				*(vertices + y * screenWidth + x) = v;
+			}
+		}
+
+		window.draw(vertices, screenWidth * screenHeight, sf::Points);
+		delete[] vertices;
+
+		//Walls
 		for (int x = 0; x < screenWidth; x++)
 		{
 			//Calculate the direction of the ray based off the camera x value
@@ -136,7 +179,6 @@ int main()
 
 			//Draw the walls
 			drawWalls(&window, wallColor, drawStart, drawEnd, side, x);
-			
 		};
 
 		//Calculate the fps

@@ -108,7 +108,6 @@ void Map::aStar(int startX, int startY)
 
 		if (((int)current->getx() == m_destinationX) && ((int)current->gety() == m_destinationY))
 		{
-			std::cout << "found" << std::endl;
 			Node* temp = current;
 			while (current->getParent() != nullptr)
 			{
